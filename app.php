@@ -4,6 +4,19 @@ if (!file_exists('data/ALL_WSPR.TXT')) {
     die('File ALL_WSPR.TXT is missing');
 }
 
+$bandsWithFreqs = [
+    [
+        'band' => '2190m',
+        'lower_freq' => 0.136,
+        'upper_freq' => 0.137,
+    ],
+    [
+        'band' => '20m',
+        'lower_freq' => 14.0,
+        'upper_freq' => 14.35,
+    ],
+];
+
 $allWspr = file_get_contents('data/ALL_WSPR.TXT');
 
 $stationCallSign = null;
@@ -26,6 +39,15 @@ foreach (explode("\n", $allWspr) as $line) {
     $lineWithoutExtraSpaces = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $line);
     $data = explode(" ", $lineWithoutExtraSpaces);
 
+    $band = null;
+    $freq = $data[5];
+
+    foreach ($bandsWithFreqs as $bandData) {
+        if ($freq >= $bandData['lower_freq'] && $freq <= $bandData['upper_freq']) {
+            $band = $bandData['band'];
+        }
+    }
+
     $calls[] = [
         'call' => $data[6],
         'gridsquare' => $data[7],
@@ -33,9 +55,9 @@ foreach (explode("\n", $allWspr) as $line) {
         'rst_sent' => $data[3],
         'rst_rcvd' => null,
         'qso_date' => '20' . $data[0],
-        'time_on' => null,
-        'band' => null,
-        'freq' => $data[5],
+        'time_on' => $data[1],
+        'band' => $band,
+        'freq' => $freq,
         'station_callsign' => null,
         'tx_pwr' => null,
     ];
