@@ -21,6 +21,8 @@ $allWspr = file_get_contents('data/ALL_WSPR.TXT');
 
 $stationCallSign = null;
 $mode = 'FT8';
+$txPower = 'ft897 30w';
+$rstRcvd = -14;
 
 $calls = [];
 
@@ -29,15 +31,14 @@ foreach (explode("\n", $allWspr) as $line) {
         continue;
     }
 
-    // @TODO get station call sign
-    $stationCallSign = "F6IEO";
-
-    if (strpos($line, 'Transmitting') !== false) {
-        continue;
-    }
-
     $lineWithoutExtraSpaces = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $line);
     $data = explode(" ", $lineWithoutExtraSpaces);
+
+    if (strpos($line, 'Transmitting') !== false) {
+        $stationCallSign = str_replace(['<', '>'], '', $data[5]);
+
+        continue;
+    }
 
     $band = null;
     $freq = $data[5];
@@ -53,13 +54,13 @@ foreach (explode("\n", $allWspr) as $line) {
         'gridsquare' => $data[7],
         'mode' => $mode,
         'rst_sent' => $data[3],
-        'rst_rcvd' => null,
+        'rst_rcvd' => $rstRcvd,
         'qso_date' => '20' . $data[0],
         'time_on' => $data[1],
         'band' => $band,
         'freq' => $freq,
-        'station_callsign' => null,
-        'tx_pwr' => null,
+        'station_callsign' => $stationCallSign,
+        'tx_pwr' => $txPower,
     ];
 }
 
