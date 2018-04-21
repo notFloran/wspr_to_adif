@@ -65,11 +65,7 @@ foreach (explode("\n", $allWspr) as $line) {
 }
 
 $adifFile = <<<ADIF
-<ADIF_VER:5>3.0.8
-<PROGRAMID:10>ADIFMaster
-<PROGRAMVERSION:3>2.7
-<EOH>
-
+ADIF Export<EOH>
 ADIF;
 
 foreach ($calls as $call) {
