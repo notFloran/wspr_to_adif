@@ -66,6 +66,7 @@ ADIF Export<EOH>
 
 ADIF;
 
+    $files = [];
     foreach ($calls as $call) {
         $adifFile .= sprintf(
             "<CALL:5>%s <GRIDSQUARE:4>%s <MODE:3>%s <RST_SENT:3>%s <RST_RCVD:3>%s <QSO_DATE:8>%s <TIME_ON:6>%s <BAND:3>%s <FREQ:6>%s <STATION_CALLSIGN:5>%s <TX_PWR:9>%s <EOR>\n",
@@ -118,5 +119,7 @@ ADIF;
 
         <input type="submit" value="Process" />
     </form>
+
+    <p>Source code is available here : <a href="https://github.com/notFloran/wspr_to_adif">https://github.com/notFloran/wspr_to_adif</a></p>
 </body>
 </html>
