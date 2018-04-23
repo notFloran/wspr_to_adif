@@ -61,14 +61,16 @@ if (!empty($_POST)) {
         ];
     }
 
-    $adifFile = <<<ADIF
+    $files = [];
+    foreach ($calls as $call) {
+        if (!isset($files[$call['qso_date']])) {
+            $files[$call['qso_date']] = <<<ADIF
 ADIF Export<EOH>
 
 ADIF;
+        }
 
-    $files = [];
-    foreach ($calls as $call) {
-        $adifFile .= sprintf(
+        $files[$call['qso_date']] .= sprintf(
             "<CALL:5>%s <GRIDSQUARE:4>%s <MODE:3>%s <RST_SENT:3>%s <RST_RCVD:3>%s <QSO_DATE:8>%s <TIME_ON:6>%s <BAND:3>%s <FREQ:6>%s <STATION_CALLSIGN:5>%s <TX_PWR:9>%s <EOR>\n",
             $call['call'],
             $call['gridsquare'],
@@ -84,10 +86,22 @@ ADIF;
         );
     }
 
+    $zipTempFile = tempnam(sys_get_temp_dir(), 'wspr_to_adif');
+    $zip = new \ZipArchive();
+    $zip->open($zipTempFile, \ZipArchive::CREATE);
+
+    foreach ($files as $date => $file) {
+        $zip->addFromString(sprintf('result_%s.adi', $date), $file);
+    }
+
+    $zip->close();
 
     header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename=result.adi');
-    echo $adifFile;
+    header('Content-Disposition: attachment; filename=result.zip');
+    readfile($zipTempFile);
+
+    unlink($zipTempFile);
+
     exit();
 }
 
