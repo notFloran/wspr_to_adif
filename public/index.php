@@ -47,7 +47,7 @@ if (!empty($_POST)) {
         }
 
         $calls[] = [
-            'call' => $data[6],
+            'call' => str_replace(['<', '>'], '', $data[6]),
             'gridsquare' => $data[7],
             'mode' => $mode,
             'rst_sent' => $data[3],
